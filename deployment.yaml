@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx
+  name: bgd
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nginx
+      app: bgd
   template:
     metadata:
       labels:
-        app: nginx
+        app: bgd
     spec:
       containers:
-      - name: nginx
-        image: registry.k8s.io/nginx-slim:0.27
+      - name: bgd
+        image: quay.io/rhdevelopers/bgd:latest
         ports:
-        - containerPort: 80
+        - containerPort: 8080
