@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: bgd-appset
+  namespace: openshift-gitops
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - cluster: local-cluster
+            server: https://kubernetes.default.svc
+            namespace: bgd
+          - cluster: sno
+            server: https://api.sno.example.com:6443
+            namespace: bgd
+  template:
+    metadata:
+      name: bgd-{{ .cluster }}
+      labels:
+        app.kubernetes.io/name: bgd
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/stolarware/gitops-lab-appset.git
+        targetRevision: main
+        path: apps/bgd
+      destination:
+        server: '{{ .server }}'
+        namespace: '{{ .namespace }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
